@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Contribution Graph</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/design.css') }}" />
+    <link href="https://fonts.googleapis.com/css2?family=Lemonada:wght@300;400&display=swap" rel="stylesheet">
+  </head>
+  <body>
+    <!-- This was taken from a repository someone made to read Google sheets data into the graph, modified to work with what I'm doing. -->
+    <!-- It is unlikely that the original code will remain at all once I'm done, but while it exists as a placeholder, I will properly cite it. -->
+    <!-- https://github.com/Padhma/GitHub-Contribution-Graph-Clone -->
+    <h1>Goodreads History</h1>
+    <div class="graph">
+      <ul class="months">
+        <li>Jan</li>
+        <li>Feb</li>
+        <li>Mar</li>
+        <li>Apr</li>
+        <li>May</li>
+        <li>Jun</li>
+        <li>Jul</li>
+        <li>Aug</li>
+        <li>Sep</li>
+        <li>Oct</li>
+        <li>Nov</li>
+        <li>Dec</li>
+      </ul>
+      <ul class="days">
+        <li>Sun</li>
+        <li>Mon</li>
+        <li>Tue</li>
+        <li>Wed</li>
+        <li>Thu</li>
+        <li>Fri</li>
+        <li>Sat</li>
+      </ul>
+      <ul class="squares">
+        {% for i in range(1,366)  %}
+            {% if i in data.keys() %}
+                <li data-toggle="tooltip" data-placement="bottom" data-animation="false" delay="0" title="{{ data[i]['count'] }} Contributions" data-level="{{ data[i]['level'] }}"></li>
+            {% else %}
+                <li data-toggle="tooltip" data-placement="bottom" data-animation="false" delay="0" title="No Contribution" data-level="0"></li>
+            {% endif %}
+        {% endfor %}
+      </ul>
+    </div>
+    <div class="contributeLegend">
+      <p class="legendTitle">Legend</p>
+      <ul class="legendSquares">
+        <li data-toggle="tooltip" data-placement="bottom" data-animation="false" delay="0" title="No Contribution"></li>
+        <li data-toggle="tooltip" data-placement="bottom" data-animation="false" delay="0" title="Less than 2 Contributions" data-level="1"></li>
+        <li data-toggle="tooltip" data-placement="bottom" data-animation="false" delay="0" title="Less than 4 Contributions" data-level="2"></li>
+        <li data-toggle="tooltip" data-placement="bottom" data-animation="false" delay="0" title="More than 4 Contributions" data-level="3"></li>
+      </ul>
+    </div>
+
+    <script>
+      var squares = document.querySelector(".squares")
+    </script>
+  </body>
+</html>
