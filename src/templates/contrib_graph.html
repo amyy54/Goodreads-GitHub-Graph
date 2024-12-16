@@ -1,9 +1,11 @@
-<!DOCTYPE html>
+<!doctype html>
 <html>
   <head>
     <title>Contribution Graph</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/design.css') }}" />
-    <link href="https://fonts.googleapis.com/css2?family=Lemonada:wght@300;400&display=swap" rel="stylesheet">
+    <link
+      rel="stylesheet"
+      href="{{ url_for('static', filename='css/design.css') }}"
+    />
   </head>
   <body>
     <!-- This was taken from a repository someone made to read Google sheets data into the graph, modified to work with what I'm doing. -->
@@ -35,27 +37,10 @@
         <li>Sat</li>
       </ul>
       <ul class="squares">
-        {% for i in range(1,366)  %}
-            {% if i in data.keys() %}
-                <li data-toggle="tooltip" data-placement="bottom" data-animation="false" delay="0" title="{{ data[i]['count'] }} Contributions" data-level="{{ data[i]['level'] }}"></li>
-            {% else %}
-                <li data-toggle="tooltip" data-placement="bottom" data-animation="false" delay="0" title="No Contribution" data-level="0"></li>
-            {% endif %}
+        {% for entry in data %}
+        <li data-level="{{ entry['level'] }}"></li>
         {% endfor %}
       </ul>
     </div>
-    <div class="contributeLegend">
-      <p class="legendTitle">Legend</p>
-      <ul class="legendSquares">
-        <li data-toggle="tooltip" data-placement="bottom" data-animation="false" delay="0" title="No Contribution"></li>
-        <li data-toggle="tooltip" data-placement="bottom" data-animation="false" delay="0" title="Less than 2 Contributions" data-level="1"></li>
-        <li data-toggle="tooltip" data-placement="bottom" data-animation="false" delay="0" title="Less than 4 Contributions" data-level="2"></li>
-        <li data-toggle="tooltip" data-placement="bottom" data-animation="false" delay="0" title="More than 4 Contributions" data-level="3"></li>
-      </ul>
-    </div>
-
-    <script>
-      var squares = document.querySelector(".squares")
-    </script>
   </body>
 </html>

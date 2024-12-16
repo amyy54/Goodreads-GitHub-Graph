@@ -2,7 +2,7 @@ from typing import List, Tuple
 from objects import Feed, Status
 import psycopg
 from datetime import datetime
-from time import strftime, mktime
+from utils import print_log_with_timestamp
 
 USER = "postgres"
 # Oh no! The password for a local postgres instance! How awful! What a horrible security violation.
@@ -39,7 +39,8 @@ def init_db() -> None:
                 CREATE TABLE IF NOT EXISTS feeds (
                     id serial primary key,
                     gr_id integer,
-                    url_name text
+                    url_name text,
+                    timezone text
                 )
                 """
             )
@@ -53,18 +54,21 @@ def get_feeds(gr_id: int = -1, url_name: str = "") -> List[Feed]:
         with conn.cursor() as cur:
             if gr_id != -1:
                 cur.execute(
-                    "SELECT id, gr_id, url_name FROM feeds WHERE gr_id = %s", (gr_id,)
+                    "SELECT id, gr_id, url_name, timezone FROM feeds WHERE gr_id = %s",
+                    (gr_id,),
                 )
             elif len(url_name) > 0:
                 cur.execute(
-                    "SELECT id, gr_id, url_name FROM feeds WHERE url_name = %s",
+                    "SELECT id, gr_id, url_name, timezone FROM feeds WHERE url_name = %s",
                     (url_name,),
                 )
             else:
-                cur.execute("SELECT id, gr_id, url_name FROM feeds")
+                cur.execute("SELECT id, gr_id, url_name, timezone FROM feeds")
             for obj in cur.fetchall():
-                if len(obj) == 3:
-                    res.append(Feed(id=obj[0], gr_id=obj[1], url_name=obj[2]))
+                if len(obj) == 4:
+                    res.append(
+                        Feed(id=obj[0], gr_id=obj[1], url_name=obj[2], timezone=obj[3])
+                    )
     return res
 
 
@@ -88,7 +92,7 @@ def get_statuses(gr_id: int = -1) -> List[Status]:
                             id=obj[0],
                             gr_id=obj[1],
                             gr_guid=obj[2],
-                            gr_date=obj[3].timetuple(),
+                            gr_date=obj[3],
                             gr_title=obj[4],
                             gr_link=obj[5],
                             gr_description=obj[6],
@@ -105,17 +109,25 @@ def add_status(status: Status) -> None:
             )
             compare_sql: List[Tuple[str, datetime]] = cur.fetchall()
 
+            sanitized_compare_sql: List[Tuple[str, str]] = []
+            for entry in compare_sql:
+                sanitized_compare_sql.append(
+                    (entry[0], entry[1].strftime("%Y-%m-%dT%H:%M:%S"))
+                )
+
             if (
                 status.gr_guid,
-                datetime.fromtimestamp(mktime(status.gr_date)),
-            ) not in compare_sql:
-                print(f"[Database Logs] Adding '{status.gr_title}' to database")
+                status.gr_date.strftime("%Y-%m-%dT%H:%M:%S"),
+            ) not in sanitized_compare_sql:
+                print_log_with_timestamp(
+                    "Database", f'Adding "{status.gr_title}" to database'
+                )
                 cur.execute(
                     "INSERT INTO status (gr_id, gr_guid, gr_date, gr_title, gr_link, gr_description) VALUES (%s, %s, %s, %s, %s, %s)",
                     (
                         status.gr_id,
                         status.gr_guid,
-                        strftime("%Y-%m-%dT%H:%M:%S", status.gr_date),
+                        status.gr_date.strftime("%Y-%m-%dT%H:%M:%S"),
                         status.gr_title,
                         status.gr_link,
                         status.gr_description,
