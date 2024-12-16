@@ -1,0 +1,20 @@
+@import url('https://fonts.googleapis.com/css2?family=Sofia+Sans:ital,wght@0,1..1000;1,1..1000&display=swap');
+
+body {
+  font-family: "Sofia Sans";
+  background-color: rgb(37 34 42);
+  color: white;
+}
+
+a {
+  color: rgb(187 138 255);
+  text-decoration: none;
+}
+
+a:hover {
+  text-decoration: underline;
+}
+
+.header {
+  text-align: center;
+}

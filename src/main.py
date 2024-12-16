@@ -48,7 +48,11 @@ def fetch_user(url_name: str):
     if len(feed_pull) > 0:
         return render_template(
             "contrib_graph.html",
-            data=generate_contribution_chart(get_statuses(gr_id=feed_pull[0].gr_id)),
+            chart_data=generate_contribution_chart(
+                get_statuses(gr_id=feed_pull[0].gr_id)
+            ),
+            url_name=feed_pull[0].url_name.title(),
+            gr_id=feed_pull[0].gr_id,
         )
     else:
         abort(404)

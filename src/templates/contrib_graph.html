@@ -2,16 +2,15 @@
 <html>
   <head>
     <title>Contribution Graph</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/main.css') }}" />
     <link
       rel="stylesheet"
       href="{{ url_for('static', filename='css/graph.css') }}"
     />
   </head>
   <body>
-    <!-- This was taken from a repository someone made to read Google sheets data into the graph, modified to work with what I'm doing. -->
-    <!-- It is unlikely that the original code will remain at all once I'm done, but while it exists as a placeholder, I will properly cite it. -->
-    <!-- https://github.com/Padhma/GitHub-Contribution-Graph-Clone -->
-    <h1>Goodreads History</h1>
+    <h1 class="header">Goodreads History ({{ url_name }})</h1>
+    <p><a class="header" href="https://www.goodreads.com/user/show/{{ gr_id }}">Profile</a></p>
     <div class="graph">
       <ul class="months">
         <li>Jan</li>
@@ -37,7 +36,7 @@
         <li>Sat</li>
       </ul>
       <ul class="squares">
-        {% for entry in data %}
+        {% for entry in chart_data %}
         <li data-level="{{ entry['level'] }}"></li>
         {% endfor %}
       </ul>
