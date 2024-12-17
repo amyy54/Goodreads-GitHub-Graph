@@ -1,6 +1,7 @@
 from datetime import datetime, timedelta
 from zoneinfo import ZoneInfo, ZoneInfoNotFoundError
 from objects import Status
+from random import randint
 
 
 def print_log_with_timestamp(process: str, text: str) -> None:
@@ -16,7 +17,9 @@ def offset_datetime(date_str: str, timezone: str) -> datetime:
         return pub_date
 
 
-def generate_contribution_chart(status: list[Status]) -> list[dict]:
+def generate_contribution_chart(
+    status: list[Status], random: bool = False
+) -> list[dict]:
     today = datetime.today()
     current_year = today.year
     first_day_of_year = datetime(current_year, 1, 1)
@@ -30,9 +33,12 @@ def generate_contribution_chart(status: list[Status]) -> list[dict]:
         if current_day.year == current_year:
             count = 0
             level = 0
-            for entry in status:
-                if entry.gr_date.strftime("%Y-%m-%d") == date_str:
-                    count += 1
+            if random:
+                count = randint(0, 7)
+            else:
+                for entry in status:
+                    if entry.gr_date.strftime("%Y-%m-%d") == date_str:
+                        count += 1
 
             if count > 5:
                 level = 3

@@ -18,3 +18,12 @@ a:hover {
 .header {
   text-align: center;
 }
+
+.center {
+  width: 40%;
+  margin: auto;
+}
+
+.url_name {
+  text-transform: capitalize;
+}

@@ -1,0 +1,9 @@
+{% extends 'base.html' %}
+{% block content %}
+  <h1 class="header">Goodreads History</h1>
+  {% include 'graph.html' %}
+  <div class="center">
+    <p>This is a site for visualizing your Goodreads activity in a way resembling the GitHub contribution chart. I find this style of visualization helpful, and its impact on a site like GitHub cannot be understated. As someone who's fond of it there, I wanted to loosely port it to reading. And here we are. Enjoy!</p>
+    <p>If you also find this type of visualization useful, you can email me <a href="mailto:{{ contact_addr }}?subject=Goodreads%20Contribution%20Graph%20-%20Add%20user%20to%20site&body=Be%20sure%20to%20link%20to%20your%20Goodreads%20profile%3B%20also%2C%20make%20sure%20to%20mention%20what%20the%20URL%20username%20should%20be%20on%20the%20site.">here</a> and I can get you added. Due to the lack of an API, data collection will only start once added to the site. But it should automatically populate over time, assuming there are no issues.
+  <p class="url_name">- <a href="{{ url_for('fetch_user', url_name=admin_url_name) }}">{{ admin_url_name }}</a></p>
+{% endblock %}

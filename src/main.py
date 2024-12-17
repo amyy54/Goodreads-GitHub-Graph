@@ -1,3 +1,4 @@
+from os import getenv
 from flask import Flask, render_template, abort
 import feedparser
 from flask_apscheduler import APScheduler
@@ -5,10 +6,14 @@ from database import init_db, get_feeds, get_statuses, add_status
 from objects import Status
 from utils import offset_datetime, generate_contribution_chart, print_log_with_timestamp
 
+META_CONTACT_ADDR = getenv("META_CONTACT_ADDR", "contact@example.com")
+ADMIN_URL_NAME = getenv("ADMIN_URL_NAME", "root")
+
 app = Flask(__name__)
 
 scheduler = APScheduler()
-scheduler.api_enabled = True
+if app.debug:
+    scheduler.api_enabled = True
 scheduler.init_app(app)
 
 
@@ -35,11 +40,17 @@ def rss_fetch():
 
 init_db()
 scheduler.start()
+scheduler.run_job("fetch_rss")
 
 
 @app.route("/")
 def index():
-    return "Hello World!"
+    return render_template(
+        "home.html",
+        chart_data=generate_contribution_chart([], random=True),
+        contact_addr=META_CONTACT_ADDR,
+        admin_url_name=ADMIN_URL_NAME,  # Otherwise the link could 404 due to the profile missing.
+    )
 
 
 @app.route("/user/<url_name>")
