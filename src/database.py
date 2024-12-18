@@ -1,24 +1,18 @@
+from os import getenv
 from typing import List, Tuple
 from objects import Feed, Status
 import psycopg
 from datetime import datetime
 from utils import print_log_with_timestamp
 
-USER = "postgres"
-# Oh no! The password for a local postgres instance! How awful! What a horrible security violation.
-# Alas, there is nothing I can do! It has already been written into the record forever. *Sigh*...
-PASSWORD = "password"
-
-HOST = "localhost"
-PORT = 5432
-
-DBNAME = "dev_goodrss"
-
-CONNSTRING = f"postgresql://{USER}:{PASSWORD}@{HOST}:{PORT}/{DBNAME}"
+DB_CONNSTRING = getenv(
+    "DB_CONNSTRING",
+    "postgresql://postgres:password@goodreads-github-graph-postgres-1:5432/dev_goodreads_graph",
+)
 
 
 def init_db() -> None:
-    with psycopg.connect(CONNSTRING) as conn:
+    with psycopg.connect(DB_CONNSTRING) as conn:
         with conn.cursor() as cur:
             cur.execute(
                 """
@@ -50,7 +44,7 @@ def init_db() -> None:
 
 def get_feeds(gr_id: int = -1, url_name: str = "") -> List[Feed]:
     res: List[Feed] = []
-    with psycopg.connect(CONNSTRING) as conn:
+    with psycopg.connect(DB_CONNSTRING) as conn:
         with conn.cursor() as cur:
             if gr_id != -1:
                 cur.execute(
@@ -74,7 +68,7 @@ def get_feeds(gr_id: int = -1, url_name: str = "") -> List[Feed]:
 
 def get_statuses(gr_id: int = -1) -> List[Status]:
     res: List[Status] = []
-    with psycopg.connect(CONNSTRING) as conn:
+    with psycopg.connect(DB_CONNSTRING) as conn:
         with conn.cursor() as cur:
             if gr_id != -1:
                 cur.execute(
@@ -102,7 +96,7 @@ def get_statuses(gr_id: int = -1) -> List[Status]:
 
 
 def add_status(status: Status) -> None:
-    with psycopg.connect(CONNSTRING) as conn:
+    with psycopg.connect(DB_CONNSTRING) as conn:
         with conn.cursor() as cur:
             cur.execute(
                 "SELECT gr_guid, gr_date FROM status WHERE gr_id = %s", (status.gr_id,)

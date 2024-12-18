@@ -2,11 +2,14 @@ from datetime import datetime, timedelta
 from zoneinfo import ZoneInfo, ZoneInfoNotFoundError
 from objects import Status
 from random import randint
+import logging
+
+logging.basicConfig(level=logging.INFO, format="%(asctime)s %(message)s")
 
 
 def print_log_with_timestamp(process: str, text: str) -> None:
-    time = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-    print(f"{time} | [{process}] {text}")
+    logger = logging.getLogger(__name__)
+    logger.info(f"[{process}] {text}")
 
 
 def offset_datetime(date_str: str, timezone: str) -> datetime:

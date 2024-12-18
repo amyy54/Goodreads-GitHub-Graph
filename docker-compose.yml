@@ -1,0 +1,35 @@
+services:
+  postgres:
+    image: postgres:17
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=password
+      - POSTGRES_DB=dev_goodreads_graph
+    volumes:
+      - postgres-db:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+
+  goodreads-graph:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    depends_on:
+      postgres:
+        condition: service_healthy
+    ports:
+      - "80:80"
+    # DB_CONNSTRING does not need to be set unless postgres settings do not match what is above.
+    # META_CONTACT_ADDR and ADMIN_URL_NAME are set to their defaults here.
+    # environment:
+    #   - DB_CONNSTRING=postgresql://<USER>:<PASSWORD>@<HOST>:<PORT>/<DB>
+    #   - META_CONTACT_ADDR=contact@example.com
+    #   - ADMIN_URL_NAME=root
+    #   # - SCRIPT_NAME=/gr-graph # Only to be used when running the site on a page other than /
+
+volumes:
+  postgres-db:

@@ -1,4 +1,5 @@
 from os import getenv
+import os
 from flask import Flask, render_template, abort
 import feedparser
 from flask_apscheduler import APScheduler
@@ -38,9 +39,14 @@ def rss_fetch():
             )
 
 
-init_db()
-scheduler.start()
-scheduler.run_job("fetch_rss")
+if not os.path.exists("lockfile.lock"):
+    open("lockfile.lock", "a").close()
+    init_db()
+
+    scheduler.start()
+    scheduler.run_job("fetch_rss")
+
+    os.remove("lockfile.lock")
 
 
 @app.route("/")
