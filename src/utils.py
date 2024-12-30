@@ -80,4 +80,6 @@ def generate_data_list(statuses: list[Status], timezone: str = "") -> dict:
                 res[date_obj].append(status)
             else:
                 res[date_obj] = [status]
-    return res
+
+    res_sort = sorted(res.items(), reverse=True)
+    return {k: v for k, v in res_sort}
