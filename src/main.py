@@ -66,7 +66,7 @@ def fetch_user(url_name: str):
         return render_template(
             "contrib_graph.html",
             chart_data=generate_contribution_chart(
-                get_statuses(gr_id=feed_pull[0].gr_id)
+                get_statuses(gr_id=feed_pull[0].gr_id), timezone=feed_pull[0].timezone
             ),
             url_name=feed_pull[0].url_name.title(),
             gr_id=feed_pull[0].gr_id,

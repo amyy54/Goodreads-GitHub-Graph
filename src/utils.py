@@ -21,9 +21,15 @@ def offset_datetime(date_str: str, timezone: str) -> datetime:
 
 
 def generate_contribution_chart(
-    status: list[Status], random: bool = False
+    status: list[Status], random: bool = False, timezone: str = ""
 ) -> list[dict]:
     today = datetime.today()
+    if len(timezone) > 0:
+        try:
+            today = today.astimezone(ZoneInfo(timezone))
+        except ZoneInfoNotFoundError:
+            pass
+
     current_year = today.year
     first_day_of_year = datetime(current_year, 1, 1)
 
