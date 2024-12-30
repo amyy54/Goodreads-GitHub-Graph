@@ -3,3 +3,4 @@ feedparser~=6.0.11
 psycopg~=3.2.3
 psycopg-binary~=3.2.3
 Flask-APScheduler~=1.13.1
+flask-babel~=4.0.0

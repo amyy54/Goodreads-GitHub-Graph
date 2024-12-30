@@ -62,3 +62,22 @@ def generate_contribution_chart(
         current_day += timedelta(days=1)
 
     return chart_data
+
+
+def generate_data_list(statuses: list[Status], timezone: str = "") -> dict:
+    today = datetime.today()
+    if len(timezone) > 0:
+        try:
+            today = today.astimezone(ZoneInfo(timezone))
+        except ZoneInfoNotFoundError:
+            pass
+
+    res = {}
+    for status in statuses:
+        if status.gr_date.year == today.year:
+            date_obj = status.gr_date.date()
+            if date_obj in res.keys():
+                res[date_obj].append(status)
+            else:
+                res[date_obj] = [status]
+    return res

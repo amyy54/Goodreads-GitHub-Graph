@@ -5,4 +5,11 @@ block content %}
 <p class="header">
   <a href="https://www.goodreads.com/user/show/{{ gr_id }}">Profile</a>
 </p>
+<div class="center">
+  {% for date, status_lst in statuses.items() %}
+  <h3>{{ date|dateformat }}</h3>
+  {% for status in status_lst %}
+  <p>{{ status.gr_title }}</p>
+  {% endfor %} {% endfor %}
+</div>
 {% endblock %}
