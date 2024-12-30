@@ -1,7 +1,8 @@
-{% extends 'base.html' %}
-{% block title %} - {{ url_name }}{% endblock %}
-{% block content %}
-  <h1 class="header">Goodreads History ({{ url_name }})</h1>
-  {% include 'graph.html' %}
-  <p><a class="header" href="https://www.goodreads.com/user/show/{{ gr_id }}">Profile</a></p>
+{% extends 'base.html' %} {% block title %} - {{ url_name }}{% endblock %} {%
+block content %}
+<h1 class="header">Goodreads History ({{ url_name }})</h1>
+{% include 'graph.html' %}
+<p class="header">
+  <a href="https://www.goodreads.com/user/show/{{ gr_id }}">Profile</a>
+</p>
 {% endblock %}
