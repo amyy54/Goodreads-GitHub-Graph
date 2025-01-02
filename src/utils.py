@@ -20,19 +20,22 @@ def offset_datetime(date_str: str, timezone: str) -> datetime:
         return pub_date
 
 
+def get_year_by_timezone(timezone: str = "") -> int:
+    today = datetime.today()
+    if len(timezone) > 0:
+        try:
+            today = today.astimezone(ZoneInfo(timezone))
+        except ZoneInfoNotFoundError:
+            pass
+
+    return today.year
+
+
 def generate_contribution_chart(
     status: list[Status], random: bool = False, timezone: str = "", year: int = -1
 ) -> list[dict]:
     if year == -1:
-        today = datetime.today()
-        if len(timezone) > 0:
-            try:
-                today = today.astimezone(ZoneInfo(timezone))
-            except ZoneInfoNotFoundError:
-                pass
-
-        current_year = today.year
-
+        current_year = get_year_by_timezone(timezone)
     else:
         current_year = year
 
@@ -73,14 +76,7 @@ def generate_data_list(
     statuses: list[Status], timezone: str = "", year: int = -1
 ) -> dict:
     if year == -1:
-        today = datetime.today()
-        if len(timezone) > 0:
-            try:
-                today = today.astimezone(ZoneInfo(timezone))
-            except ZoneInfoNotFoundError:
-                pass
-
-        current_year = today.year
+        current_year = get_year_by_timezone(timezone)
     else:
         current_year = year
 
@@ -100,14 +96,7 @@ def generate_data_list(
 def get_year_bounds(
     statuses: list[Status], year: int = -1, timezone: str = ""
 ) -> YearBounds:
-    today = datetime.today()
-    if len(timezone) > 0:
-        try:
-            today = today.astimezone(ZoneInfo(timezone))
-        except ZoneInfoNotFoundError:
-            pass
-
-    current_year = today.year
+    current_year = get_year_by_timezone(timezone)
     viewed_year = year if year != -1 else current_year
 
     res = YearBounds(

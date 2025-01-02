@@ -1,12 +1,13 @@
 from os import getenv
 import os
-from flask import Flask, render_template, abort, request
+from flask import Flask, redirect, render_template, abort, request, url_for
 from flask_babel import Babel
 import feedparser
 from flask_apscheduler import APScheduler
 from database import init_db, get_feeds, get_statuses, add_status
 from objects import Status
 from utils import (
+    get_year_by_timezone,
     offset_datetime,
     generate_contribution_chart,
     print_log_with_timestamp,
@@ -105,6 +106,8 @@ def fetch_user_with_year_data(url_name: str, year: str):
 
     feed_pull = get_feeds(url_name=url_name)
     if len(feed_pull) > 0:
+        if get_year_by_timezone(feed_pull[0].timezone) == year_int:
+            return redirect(url_for("fetch_user", url_name=url_name))
         statuses = get_statuses(gr_id=feed_pull[0].gr_id)
         return render_template(
             "contrib_graph.html",
