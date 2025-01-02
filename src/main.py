@@ -76,6 +76,11 @@ def index():
 
 
 @app.route("/user/<url_name>")
+def fetch_user_dep(url_name: str):
+    return redirect(url_for("fetch_user", url_name=url_name))
+
+
+@app.route("/@<url_name>")
 def fetch_user(url_name: str):
     feed_pull = get_feeds(url_name=url_name)
     if len(feed_pull) > 0:
@@ -95,6 +100,11 @@ def fetch_user(url_name: str):
 
 
 @app.route("/user/<url_name>/<year>")
+def fetch_user_with_year_data_dep(url_name: str, year: str):
+    return redirect(url_for("fetch_user_with_year_data", url_name=url_name, year=year))
+
+
+@app.route("/@<url_name>/<year>")
 def fetch_user_with_year_data(url_name: str, year: str):
     try:
         year_int = int(year)
