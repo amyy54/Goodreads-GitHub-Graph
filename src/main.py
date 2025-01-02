@@ -11,6 +11,7 @@ from utils import (
     generate_contribution_chart,
     print_log_with_timestamp,
     generate_data_list,
+    get_year_bounds,
 )
 
 META_CONTACT_ADDR = getenv("META_CONTACT_ADDR", "contact@example.com")
@@ -83,9 +84,41 @@ def fetch_user(url_name: str):
             chart_data=generate_contribution_chart(
                 statuses, timezone=feed_pull[0].timezone
             ),
-            url_name=feed_pull[0].url_name.title(),
+            url_name=feed_pull[0].url_name,
             gr_id=feed_pull[0].gr_id,
             statuses=generate_data_list(statuses, timezone=feed_pull[0].timezone),
+            year_data=get_year_bounds(statuses, timezone=feed_pull[0].timezone),
+        )
+    else:
+        abort(404)
+
+
+@app.route("/user/<url_name>/<year>")
+def fetch_user_with_year_data(url_name: str, year: str):
+    try:
+        year_int = int(year)
+    except ValueError:
+        abort(404)
+
+    if year_int > 2500 or year_int < 1900:
+        abort(404)
+
+    feed_pull = get_feeds(url_name=url_name)
+    if len(feed_pull) > 0:
+        statuses = get_statuses(gr_id=feed_pull[0].gr_id)
+        return render_template(
+            "contrib_graph.html",
+            chart_data=generate_contribution_chart(
+                statuses, timezone=feed_pull[0].timezone, year=year_int
+            ),
+            url_name=feed_pull[0].url_name,
+            gr_id=feed_pull[0].gr_id,
+            statuses=generate_data_list(
+                statuses, timezone=feed_pull[0].timezone, year=year_int
+            ),
+            year_data=get_year_bounds(
+                statuses, year=year_int, timezone=feed_pull[0].timezone
+            ),
         )
     else:
         abort(404)

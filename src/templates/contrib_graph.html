@@ -1,10 +1,30 @@
 {% extends 'base.html' %} {% block title %} - {{ url_name }}{% endblock %} {%
 block content %}
-<h1 class="header">Goodreads History ({{ url_name }})</h1>
+<h1 class="header">
+  Goodreads History (<span class="uname">{{ url_name }}</span>)
+</h1>
 {% include 'graph.html' %}
-<p class="header">
-  <a href="https://www.goodreads.com/user/show/{{ gr_id }}">Profile</a>
-</p>
+<div class="year_line center header">
+  <p>
+    {% if year_data.last.display %} ←
+    <a
+      href="{{ url_for('fetch_user_with_year_data', url_name=url_name, year=year_data.last.year) }}"
+      >{{ year_data.last.year }}</a
+    >
+    {% endif %}
+  </p>
+  <p>
+    <a href="https://www.goodreads.com/user/show/{{ gr_id }}">Profile</a>
+  </p>
+  <p>
+    {% if year_data.next.display %}
+    <a
+      href="{{ url_for('fetch_user_with_year_data', url_name=url_name, year=year_data.next.year) }}"
+      >{{ year_data.next.year }}</a
+    >
+    → {% endif %}
+  </p>
+</div>
 <div class="center">
   {% for date, status_lst in statuses.items() %}
   <h3>{{ date|dateformat }}</h3>

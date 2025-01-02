@@ -1,6 +1,6 @@
 from datetime import datetime, timedelta
 from zoneinfo import ZoneInfo, ZoneInfoNotFoundError
-from objects import Status
+from objects import Status, YearBounds, YearData
 from random import randint
 import logging
 
@@ -21,16 +21,21 @@ def offset_datetime(date_str: str, timezone: str) -> datetime:
 
 
 def generate_contribution_chart(
-    status: list[Status], random: bool = False, timezone: str = ""
+    status: list[Status], random: bool = False, timezone: str = "", year: int = -1
 ) -> list[dict]:
-    today = datetime.today()
-    if len(timezone) > 0:
-        try:
-            today = today.astimezone(ZoneInfo(timezone))
-        except ZoneInfoNotFoundError:
-            pass
+    if year == -1:
+        today = datetime.today()
+        if len(timezone) > 0:
+            try:
+                today = today.astimezone(ZoneInfo(timezone))
+            except ZoneInfoNotFoundError:
+                pass
 
-    current_year = today.year
+        current_year = today.year
+
+    else:
+        current_year = year
+
     first_day_of_year = datetime(current_year, 1, 1)
 
     first_sunday = first_day_of_year - timedelta(first_day_of_year.weekday() + 1)
@@ -64,17 +69,24 @@ def generate_contribution_chart(
     return chart_data
 
 
-def generate_data_list(statuses: list[Status], timezone: str = "") -> dict:
-    today = datetime.today()
-    if len(timezone) > 0:
-        try:
-            today = today.astimezone(ZoneInfo(timezone))
-        except ZoneInfoNotFoundError:
-            pass
+def generate_data_list(
+    statuses: list[Status], timezone: str = "", year: int = -1
+) -> dict:
+    if year == -1:
+        today = datetime.today()
+        if len(timezone) > 0:
+            try:
+                today = today.astimezone(ZoneInfo(timezone))
+            except ZoneInfoNotFoundError:
+                pass
+
+        current_year = today.year
+    else:
+        current_year = year
 
     res = {}
     for status in statuses:
-        if status.gr_date.year == today.year:
+        if status.gr_date.year == current_year:
             date_obj = status.gr_date.date()
             if date_obj in res.keys():
                 res[date_obj].append(status)
@@ -83,3 +95,34 @@ def generate_data_list(statuses: list[Status], timezone: str = "") -> dict:
 
     res_sort = sorted(res.items(), reverse=True)
     return {k: v for k, v in res_sort}
+
+
+def get_year_bounds(
+    statuses: list[Status], year: int = -1, timezone: str = ""
+) -> YearBounds:
+    today = datetime.today()
+    if len(timezone) > 0:
+        try:
+            today = today.astimezone(ZoneInfo(timezone))
+        except ZoneInfoNotFoundError:
+            pass
+
+    current_year = today.year
+    viewed_year = year if year != -1 else current_year
+
+    res = YearBounds(
+        last=YearData(
+            year=viewed_year - 1,
+            display=len(
+                [
+                    status.gr_guid
+                    for status in statuses
+                    if status.gr_date.year == viewed_year - 1
+                ]
+            )
+            > 0,
+        ),
+        next=YearData(year=viewed_year + 1, display=viewed_year + 1 <= current_year),
+    )
+
+    return res

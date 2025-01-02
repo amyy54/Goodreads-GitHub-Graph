@@ -15,6 +15,10 @@ a:hover {
   text-decoration: underline;
 }
 
+.uname {
+  text-transform: capitalize;
+}
+
 .header {
   text-align: center;
 }
@@ -26,4 +30,13 @@ a:hover {
 
 .url_name {
   text-transform: capitalize;
+}
+
+.year_line {
+  display: grid;
+  grid-template-columns: auto auto auto;
+}
+
+.year_line > p {
+  width: 10vw;
 }

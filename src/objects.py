@@ -19,3 +19,15 @@ class Status:
     gr_title: str
     gr_link: str
     gr_description: str
+
+
+@dataclass
+class YearData:
+    year: int
+    display: bool
+
+
+@dataclass
+class YearBounds:
+    last: YearData
+    next: YearData
