@@ -57,9 +57,9 @@ def generate_contribution_chart(
                     if entry.gr_date.strftime("%Y-%m-%d") == date_str:
                         count += 1
 
-            if count > 5:
+            if count > 3:
                 level = 3
-            elif count > 3:
+            elif count > 1:
                 level = 2
             elif count > 0:
                 level = 1
